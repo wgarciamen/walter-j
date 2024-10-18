@@ -1,0 +1,107 @@
+/* Contenedor principal de la cuadrícula */
+.grid-perfil-cliente {
+  display: grid; /* Usa Grid Layout para organizar los elementos */
+  grid-template-columns: 3fr 1fr; /* Define dos columnas: una más grande para los datos y una más pequeña para la foto */
+  grid-template-areas: 
+    "grid-perfil-cliente-datos grid-perfil-cliente-foto"; /* Establece las áreas de datos y foto */
+  gap: 20px; /* Añade espacio entre las columnas */
+  width: 60%; /* Ajusta el ancho del contenedor para centrar el formulario */
+  margin: 0 auto; /* Centra el contenedor completo en la página */
+  padding-left: 20px; /* Añade un margen para mover el contenido un poco más a la derecha */
+}
+
+/* Sección de datos del perfil */
+.grid-perfil-cliente-datos {
+  grid-area: grid-perfil-cliente-datos; /* Asegura que esta área esté correctamente posicionada en el grid */
+  display: flex;
+  flex-direction: column; /* Mantén los elementos del formulario en una columna */
+  justify-content: flex-start; /* Alinea los elementos al inicio del contenedor */
+  align-items: flex-start; /* Mantén los elementos alineados a la izquierda */
+  padding: 20px; /* Añade espacio alrededor del formulario */
+  width: 100%; /* Asegura que el formulario ocupe todo el ancho disponible */
+  margin-left: 20px; /* Añade un margen izquierdo para mover el formulario más a la derecha */
+  margin-top: -70px; /* Elimina el margen superior para mover el formulario hacia arriba */
+}
+
+/* Formulario de entrada de datos */
+.grid-perfil-cliente-datos form {
+  width: 100%; /* Asegura que el formulario ocupe el ancho completo del contenedor */
+  margin-bottom: 10px; /* Añade espacio debajo del formulario */
+}
+
+.grid-perfil-cliente-datos input[type="text"],
+.grid-perfil-cliente-datos input[type="email"],
+.grid-perfil-cliente-datos input[type="date"],
+.grid-perfil-cliente-datos input[type="tel"],
+.grid-perfil-cliente-datos select {
+  display: block; /* Asegura que cada campo ocupe el ancho completo del contenedor */
+  font-family: inherit; /* Utiliza la misma familia de fuentes que el contenedor */
+  border-radius: 5px; /* Redondea las esquinas de los campos de entrada */
+  padding: 10px; /* Añade espacio dentro de los campos */
+  font-size: 14px; /* Ajusta el tamaño de la fuente */
+  width: 100%; /* Hace que el campo ocupe todo el ancho disponible */
+  border: solid 1px #e4e4e4; /* Añade un borde sutil */
+}
+
+/* Sección de la foto de perfil */
+.grid-perfil-cliente-foto {
+  grid-area: grid-perfil-cliente-foto; /* Posiciona correctamente la foto en el grid */
+  display: flex;
+  flex-direction: column; /* Organiza los elementos en una columna */
+  justify-content: flex-start; /* Alinea la imagen de perfil hacia la parte superior */
+  align-items: center; /* Centra la imagen de perfil horizontalmente */
+  padding: 10px; /* Añade un poco de espacio interno */
+  margin-left: auto; /* Empuja la foto de perfil hacia la derecha */
+  margin-top: -70px; /* Reduce el margen superior para mover la foto hacia arriba */
+}
+
+/* Imagen de perfil */
+.grid-perfil-cliente-imagen {
+  width: 150px; /* Tamaño fijo de la imagen de perfil */
+  height: 150px; /* Tamaño fijo de la imagen de perfil */
+  margin-top: 8px; /* Añade un pequeño margen en la parte superior */
+}
+
+.grid-perfil-cliente-imagen img {
+  width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
+  object-fit: cover; /* Ajusta la imagen para que siempre cubra el área */
+  border-radius: 5px; /* Redondea las esquinas de la imagen */
+}
+
+/* Botón para cambiar la foto de perfil */
+.grid-perfil-cliente-imagen button {
+  margin-top: 5px; /* Añade un margen en la parte superior del botón */
+  padding: 5px; /* Añade relleno dentro del botón */
+  color: white; /* Cambia el color del texto del botón a blanco */
+  background-color: black; /* Fondo negro para el botón */
+  border-radius: 0.2rem; /* Redondea las esquinas del botón */
+  font-size: 14px; /* Ajusta el tamaño de la fuente del botón */
+  border: none; /* Elimina el borde del botón */
+  cursor: pointer; /* Cambia el cursor a un puntero cuando se pasa sobre el botón */
+}
+
+/* Diseño responsivo para pantallas pequeñas */
+@media screen and (max-width: 750px) {
+  .grid-perfil-cliente {
+    grid-template-columns: 1fr; /* Cambia a una sola columna en pantallas pequeñas */
+    grid-template-areas: 
+      "grid-perfil-cliente-datos" 
+      "grid-perfil-cliente-foto"; /* Coloca los datos primero y luego la foto */
+    gap: 20px; /* Ajusta el espacio entre las secciones */
+  }
+
+  .grid-perfil-cliente-foto,
+  .grid-perfil-cliente-datos {
+    align-items: center; /* Centra el contenido en pantallas pequeñas */
+  }
+}
+/* Estilo para el encabezado de la página */
+.titulo-paginas {
+  width: 100%; /* Asegura que el encabezado ocupe todo el ancho disponible */
+  text-align: center; /* Alinea el texto del encabezado hacia la derecha */
+  margin: 0; /* Elimina los márgenes para que no afecte la disposición */
+  padding: 70px 20px; /* Añade un pequeño relleno para separar del contenido */
+  font-size: 22px; /* Ajusta el tamaño de la fuente */
+  font-weight: bold; /* Mantiene el texto en negrita */
+  
+}
