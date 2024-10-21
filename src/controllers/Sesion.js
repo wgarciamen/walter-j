@@ -222,21 +222,26 @@ export const editarTokenAdministrador = async (idUsuario, token) => {
 
 export const ingresarClienteAuthAdministrador = (formIngresar) => {
   return signInWithEmailAndPassword(
-    auth,
-    formIngresar.correo,
-    formIngresar.contrasena
+    auth,                           // Usamos el objeto de autenticación de Firebase
+    formIngresar.correo,            // Correo del administrador
+    formIngresar.contrasena         // Contraseña del administrador
   )
     .then((userCredential) => {
-      const user = userCredential.user;
+      const user = userCredential.user;  // Obtenemos el usuario autenticado
 
-      // Obtener el IdToken del usuario
+      // Obtenemos el IdToken del usuario para guardarlo en localStorage
       return user.getIdToken().then((idToken) => {
-        // Guardar el IdToken en el localStorage
-        localStorage.setItem("IdToken", idToken);
+        // Guardamos el IdToken, el Rol y el IdCliente en localStorage
+        localStorage.setItem("IdToken", idToken);      // Guardar el IdToken
+        localStorage.setItem("Rol", "administrador");  // Guardar el rol como administrador
+        localStorage.setItem("IdCliente", user.uid);   // Guardar el UID del usuario como IdCliente
 
-        // Actualizar el IdToken en la base de datos
-        editarTokenAdministrador(user.uid, idToken);
+        // Verificamos que los valores se guarden correctamente
+        console.log("IdToken guardado:", idToken);
+        console.log("Rol guardado:", "administrador");
+        console.log("IdCliente guardado:", user.uid);
 
+        // Devuelve los datos del usuario si todo es correcto
         const usuario = {
           idUsuario: user.uid,
           token: idToken,
@@ -246,9 +251,9 @@ export const ingresarClienteAuthAdministrador = (formIngresar) => {
     })
     .catch((error) => {
       if (error.code === "auth/wrong-password") {
-        return "contrasenaIncorrecta";
+        return "contrasenaIncorrecta";  // Manejo del error de contraseña incorrecta
       } else {
-        return "error";
+        return "error";  // Otros errores
       }
     });
 };

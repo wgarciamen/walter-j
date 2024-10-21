@@ -7,7 +7,7 @@ function App() {
   return (
     <EstadoProveedor>
       <Router>
-        <Routes />
+        <Routes/>
       </Router>
     </EstadoProveedor>
   );

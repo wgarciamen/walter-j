@@ -11,22 +11,20 @@ const estadoInicial = {
 
 if (localStorage.getItem("IdToken")) {
   const usuarioData = {
-    Metodo: localStorage.getItem("Metodo") || "", 
-    IdCliente: localStorage.getItem("IdCliente") || "", 
-    IdToken: localStorage.getItem("IdToken") || "",  
-    Correo: localStorage.getItem("Correo") || "",  
-    Nombres: localStorage.getItem("Nombres") || "",  
-    Apellidos: localStorage.getItem("Apellidos") || "",  
-    Genero: localStorage.getItem("Genero") || "",  
-    FechaNacimiento: localStorage.getItem("FechaNacimiento") || "",  
-    Celular: localStorage.getItem("Celular") || "",  
-    FotoUrl: localStorage.getItem("FotoUrl") || "",  
-    Rol: localStorage.getItem("Rol") || "",  
+    Metodo: localStorage.getItem("Metodo"),
+    IdCliente: localStorage.getItem("IdCliente"),
+    IdToken: localStorage.getItem("IdToken"),
+    Correo: localStorage.getItem("Correo"),
+    Nombres: localStorage.getItem("Nombres"),
+    Apellidos: localStorage.getItem("Apellidos"),
+    Genero: localStorage.getItem("Genero"),
+    FechaNacimiento: localStorage.getItem("FechaNacimiento"),
+    Celular: localStorage.getItem("Celular"),
+    FotoUrl: localStorage.getItem("FotoUrl"),
+    Rol: localStorage.getItem("Rol"),
   };
- console.log("usuarioData desde localStorage:", usuarioData); // Depuración
   estadoInicial.usuario = usuarioData;
 } else {
-  console.log("No se encontró IdToken en localStorage."); // Depuración
   estadoInicial.usuario = {};
 }
 
@@ -58,26 +56,24 @@ function estadoReductor(state, action) {
       return { ...state, sidebar: action.sidebar };
     case "AGREGAR_PRODUCTO":
       return { ...state, productos: [...state.productos, action.payload] };
-   case "AUMENTAR_CANTIDAD":
-  return {
-    ...state,
-    productos: state.productos.map((pro) =>
-      pro.IdProducto === action.payload.id
-        ? { ...pro, Unidades: action.payload.uni + 1 }
-        : pro
-    ),
-  };
-
-case "DISMINUIR_CANTIDAD":
-  return {
-    ...state,
-    productos: state.productos.map((pro) =>
-      pro.IdProducto === action.payload.id
-        ? { ...pro, Unidades: action.payload.uni - 1 }
-        : pro
-    ),
-  };
-
+    case "AUMENTAR_CANTIDAD":
+      return {
+        ...state,
+        productos: state.productos.filter((pro) =>
+          pro.IdProducto === action.payload.id
+            ? (pro.Unidades = action.payload.uni + 1)
+            : pro.Unidades
+        ),
+      };
+    case "DISMINUIR_CANTIDAD":
+      return {
+        ...state,
+        productos: state.productos.filter((pro) =>
+          pro.IdProducto === action.payload.id
+            ? (pro.Unidades = action.payload.uni - 1)
+            : pro.Unidades
+        ),
+      };
     case "ELIMINAR_PRODUCTO":
       const index = state.productos.findIndex(
         (producto) => producto.IdProducto === action.id
@@ -86,14 +82,14 @@ case "DISMINUIR_CANTIDAD":
       if (index >= 0) {
         nuevoCarrito.splice(index, 1);
       } else {
-        console.log(`No se puede eliminar el producto (id: ${action.id})`);
+        console.log(`Cant remove product (id: ${action.id})!`);
       }
       return {
         ...state,
         productos: nuevoCarrito,
       };
     case "ELIMINAR_CARRITO":
-      return { ...state, productos: [] };
+      return { ...state, productos: action.productos };
 
     default:
       return state;
@@ -103,72 +99,54 @@ case "DISMINUIR_CANTIDAD":
 function EstadoProveedor(props) {
   const [state, dispatch] = useReducer(estadoReductor, estadoInicial);
 
- useEffect(() => {
-  const idToken = localStorage.getItem("IdToken");
-  const rolUsuario = localStorage.getItem("Rol");
-  const idCliente = localStorage.getItem("IdCliente");
-
-  if (idToken && rolUsuario && idCliente) {
-    const clienteRef = doc(
-      db,
-      `${rolUsuario === "administrador" ? "Personales" : "Clientes"}`,
-      idCliente
-    );
-    console.log("clienteRef creado:", clienteRef); // Depuración
-
-    const unsubscribe = onSnapshot(clienteRef, (doc) => {
-      const docData = doc.data();
-      console.log("Datos obtenidos del snapshot (docData):", docData); // Depuración
-
-      if (docData && docData.IdToken) {
-        console.log("docData.IdToken válido:", docData.IdToken); // Depuración
-
-        const userData = {
-          Nombres: docData.Nombres || "",
-          Apellidos: docData.Apellidos || "",
-          Genero: docData.Genero || "",
-          FechaNacimiento: docData.FechaNacimiento || "",
-          Celular: docData.Celular || "",
-          FotoUrl: docData.FotoUrl || "",
-        };
-
-        dispatch({
-          type: "NUEVA_SESION",
-          payload: userData,
-        });
-
-        localStorage.setItem("Nombres", docData.Nombres || "");
-        localStorage.setItem("Apellidos", docData.Apellidos || "");
-        localStorage.setItem("Genero", docData.Genero || "");
-        localStorage.setItem("FechaNacimiento", docData.FechaNacimiento || "");
-        localStorage.setItem("Celular", docData.Celular || "");
-        localStorage.setItem("FotoUrl", docData.FotoUrl || "");
-      } else {
-        console.log("NO HAY USUARIO o docData es null.");
-        cerrarSesion();
-      }
-    });
-
-    return () => unsubscribe(); // Limpiar el snapshot listener
-  } else {
-    console.log("IdToken, Rol o IdCliente no están presentes en localStorage.");
-    cerrarSesion();
-  }
-}, []);
-
+  useEffect(() => {
+    if (localStorage.getItem("IdToken")) {
+      const rolUsuario = localStorage.getItem("Rol");
+      const clienteRef = doc(
+        db,
+        `${rolUsuario === "administrador" ? "Personales" : "Clientes"}`,
+        localStorage.getItem("IdCliente")
+      );
+      onSnapshot(clienteRef, (doc) => {
+        if (localStorage.getItem("IdToken") === doc.data().IdToken) {
+          const userData = {
+            Nombres: doc.data().Nombres,
+            Apellidos: doc.data().Apellidos,
+            Genero: doc.data().Genero,
+            FechaNacimiento: doc.data().FechaNacimiento,
+            Celular: doc.data().Celular,
+            FotoUrl: doc.data().FotoUrl,
+          };
+          dispatch({
+            type: "NUEVA_SESION",
+            payload: userData,
+          });
+          localStorage.setItem("Nombres", doc.data().Nombres);
+          localStorage.setItem("Apellidos", doc.data().Apellidos);
+          localStorage.setItem("Genero", doc.data().Genero);
+          localStorage.setItem("FechaNacimiento", doc.data().FechaNacimiento);
+          localStorage.setItem("Celular", doc.data().Celular);
+          localStorage.setItem("FotoUrl", doc.data().FotoUrl);
+        } else {
+          console.log("NO HAY USUARIO");
+          cerrarSesion();
+        }
+      });
+    }
+  }, [state.user]);
 
   function iniciarSesion(usuarioData) {
-    localStorage.setItem("Metodo", usuarioData.Metodo || "");
-    localStorage.setItem("IdCliente", usuarioData.IdCliente || "");
-    localStorage.setItem("IdToken", usuarioData.IdToken || "");
-    localStorage.setItem("Correo", usuarioData.Correo || "");
-    localStorage.setItem("Nombres", usuarioData.Nombres || "");
-    localStorage.setItem("Apellidos", usuarioData.Apellidos || "");
-    localStorage.setItem("Genero", usuarioData.Genero || "");
-    localStorage.setItem("FechaNacimiento", usuarioData?.FechaNacimiento || "");
-    localStorage.setItem("Celular", usuarioData.Celular || "");
-    localStorage.setItem("FotoUrl", usuarioData.FotoUrl || "");
-    localStorage.setItem("Rol", usuarioData.Rol || "");
+    localStorage.setItem("Metodo", usuarioData.Metodo);
+    localStorage.setItem("IdCliente", usuarioData.IdCliente);
+    localStorage.setItem("IdToken", usuarioData.IdToken);
+    localStorage.setItem("Correo", usuarioData.Correo);
+    localStorage.setItem("Nombres", usuarioData.Nombres);
+    localStorage.setItem("Apellidos", usuarioData.Apellidos);
+    localStorage.setItem("Genero", usuarioData.Genero);
+    localStorage.setItem("FechaNacimiento", usuarioData.FechaNacimiento);
+    localStorage.setItem("Celular", usuarioData.Celular);
+    localStorage.setItem("FotoUrl", usuarioData.FotoUrl);
+    localStorage.setItem("Rol", usuarioData.Rol);
 
     dispatch({
       type: "NUEVA_SESION",
@@ -196,7 +174,7 @@ function EstadoProveedor(props) {
         });
       })
       .catch((error) => {
-        console.log("Error al cerrar sesión:", error);
+        console.log("Error cerrar sesión: ", error);
       });
   }
 
@@ -240,7 +218,6 @@ function EstadoProveedor(props) {
       id: IdProducto,
     });
   };
-
   const eliminarCarrito = () => {
     dispatch({ type: "ELIMINAR_CARRITO", productos: [] });
   };
