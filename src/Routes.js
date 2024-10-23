@@ -98,14 +98,15 @@ const RoutesComponent = () => {
 
       {/* RUTAS ADMINISTRADOR */}
       <Route
-        path="/administrador/reportes"
-        element={
-          <RutaAdministrador
-            layout={LayoutAdministracion}
-            component={AdmnistradorReportes}
-          />
-        }
-      />
+  path="/administrador/reportes/*"
+  element={
+    <RutaAdministrador
+      layout={LayoutAdministracion}
+      component={AdmnistradorReportes}
+    />
+  }
+/>
+
       <Route
         path="/administrador/categorias"
         element={

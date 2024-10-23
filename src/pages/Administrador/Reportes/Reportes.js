@@ -1,27 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../../db/firebase";
-import {
-  collectionGroup,
-  getDocs,
-  query,
-  orderBy,
-  collection,
-} from "firebase/firestore";
-import {
-  TablaNivelEficacia,
-  TablaConversion,
-} from "../../../components/Tablas";
-import GraficoBarrasEficacia from "./GraficoBarrasEficacia";
-import GraficoBarrasVisitas from "./GraficoBarrasVisitas";
-
+import { db } from "../../../db/firebase"; // Ajusta esta ruta si es necesario
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { TablaNivelEficacia, TablaConversion } from "../../../components/Tablas"; // Verifica que estas rutas sean correctas
+import GraficoBarrasEficacia from "./GraficoBarrasEficacia"; // Verifica esta ruta
+import GraficoBarrasVisitas from "./GraficoBarrasVisitas"; // Verifica esta ruta
 import {
   productosTotal,
   clientesTotal,
   pedidosTotal,
   ventasTotal,
-} from "../../../controllers/Reportes";
+} from "../../../controllers/Reportes"; // Verifica que el archivo `Reportes.js` en esta ruta exporte las funciones
 
-import "./Reportes.css";
+import "./Reportes.css"; // Verifica que este archivo exista en la misma carpeta
 
 const Reportes = () => {
   const [productos, setProductos] = useState(0);
@@ -37,6 +27,7 @@ const Reportes = () => {
   const [fechaInicioIndice, setFechaInicioIndice] = useState(-1);
   const [fechaFin, setFechaFin] = useState("");
   const [fechaFinIndice, setFechaFinIndice] = useState(-1);
+
   useEffect(() => {
     (async () => {
       const totalProductos = await productosTotal();
@@ -49,9 +40,10 @@ const Reportes = () => {
       setTotal(totalVentas);
     })();
   }, []);
+
   useEffect(() => {
     (async () => {
-      const pedidosRef = collectionGroup(db, "Pedidos");
+      const pedidosRef = collection(db, "Pedidos");
       const queryPedidos = query(pedidosRef, orderBy("Fecha", "desc"));
       const consultaPedidos = await getDocs(queryPedidos);
       const resultado = consultaPedidos.docs.map((doc) => ({

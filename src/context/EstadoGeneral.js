@@ -100,41 +100,58 @@ function EstadoProveedor(props) {
   const [state, dispatch] = useReducer(estadoReductor, estadoInicial);
 
   useEffect(() => {
-    if (localStorage.getItem("IdToken")) {
-      const rolUsuario = localStorage.getItem("Rol");
+    const idToken = localStorage.getItem("IdToken");
+    const rolUsuario = localStorage.getItem("Rol");
+    const idCliente = localStorage.getItem("IdCliente");
+  
+    if (idToken && rolUsuario && idCliente) {
       const clienteRef = doc(
         db,
-        `${rolUsuario === "administrador" ? "Personales" : "Clientes"}`,
-        localStorage.getItem("IdCliente")
+        rolUsuario === "administrador" ? "Personales" : "Clientes", // Sin `${}`
+        idCliente
       );
-      onSnapshot(clienteRef, (doc) => {
-        if (localStorage.getItem("IdToken") === doc.data().IdToken) {
+      console.log("clienteRef creado:", clienteRef); // Depuración
+  
+      const unsubscribe = onSnapshot(clienteRef, (doc) => {
+        const docData = doc.data();
+        console.log("Datos obtenidos del snapshot (docData):", docData); // Depuración
+  
+        if (docData && docData.IdToken) {
+          console.log("docData.IdToken válido:", docData.IdToken); // Depuración
+  
           const userData = {
-            Nombres: doc.data().Nombres,
-            Apellidos: doc.data().Apellidos,
-            Genero: doc.data().Genero,
-            FechaNacimiento: doc.data().FechaNacimiento,
-            Celular: doc.data().Celular,
-            FotoUrl: doc.data().FotoUrl,
+            Nombres: docData.Nombres || "",
+            Apellidos: docData.Apellidos || "",
+            Genero: docData.Genero || "",
+            FechaNacimiento: docData.FechaNacimiento || "",
+            Celular: docData.Celular || "",
+            FotoUrl: docData.FotoUrl || "",
           };
+  
           dispatch({
             type: "NUEVA_SESION",
             payload: userData,
           });
-          localStorage.setItem("Nombres", doc.data().Nombres);
-          localStorage.setItem("Apellidos", doc.data().Apellidos);
-          localStorage.setItem("Genero", doc.data().Genero);
-          localStorage.setItem("FechaNacimiento", doc.data().FechaNacimiento);
-          localStorage.setItem("Celular", doc.data().Celular);
-          localStorage.setItem("FotoUrl", doc.data().FotoUrl);
+  
+          localStorage.setItem("Nombres", docData.Nombres || "");
+          localStorage.setItem("Apellidos", docData.Apellidos || "");
+          localStorage.setItem("Genero", docData.Genero || "");
+          localStorage.setItem("FechaNacimiento", docData.FechaNacimiento || "");
+          localStorage.setItem("Celular", docData.Celular || "");
+          localStorage.setItem("FotoUrl", docData.FotoUrl || "");
         } else {
-          console.log("NO HAY USUARIO");
+          console.log("NO HAY USUARIO o docData es null.");
           cerrarSesion();
         }
       });
+  
+      return () => unsubscribe(); // Limpiar el snapshot listener
+    } else {
+      console.log("IdToken, Rol o IdCliente no están presentes en localStorage.");
+      cerrarSesion();
     }
-  }, [state.user]);
-
+  }, []);
+  
   function iniciarSesion(usuarioData) {
     localStorage.setItem("Metodo", usuarioData.Metodo);
     localStorage.setItem("IdCliente", usuarioData.IdCliente);
