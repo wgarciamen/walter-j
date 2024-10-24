@@ -4,11 +4,11 @@ import { SidebarCliente } from "../../components/sidebars";
 import { EstadoContexto } from "../../context/EstadoGeneral";
 import CalcularPantalla from "../../util/CalcularPantalla";
 
-const LayoutGeneral = (props) => {
+const LayoutGeneral = ({ children }) => {
   const { ancho } = CalcularPantalla();
   const { usuario } = useContext(EstadoContexto);
   const exiteUsuario = Object.keys(usuario).length;
-  const { children } = props;
+
   return (
     <>
       <Menu />

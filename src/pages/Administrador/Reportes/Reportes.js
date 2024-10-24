@@ -1,17 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { db } from "../../../db/firebase"; // Ajusta esta ruta si es necesario
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { TablaNivelEficacia, TablaConversion } from "../../../components/Tablas"; // Verifica que estas rutas sean correctas
-import GraficoBarrasEficacia from "./GraficoBarrasEficacia"; // Verifica esta ruta
-import GraficoBarrasVisitas from "./GraficoBarrasVisitas"; // Verifica esta ruta
 import {
-  productosTotal,
+  collection,
+  collectionGroup,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import {
+  TablaConversion,
+  TablaNivelEficacia,
+} from "../../../components/Tablas";
+import { db } from "../../../db/firebase";
+import GraficoBarrasEficacia from "./GraficoBarrasEficacia";
+import GraficoBarrasVisitas from "./GraficoBarrasVisitas";
+
+import {
   clientesTotal,
   pedidosTotal,
+  productosTotal,
   ventasTotal,
-} from "../../../controllers/Reportes"; // Verifica que el archivo `Reportes.js` en esta ruta exporte las funciones
+} from "../../../controllers/Reportes";
 
-import "./Reportes.css"; // Verifica que este archivo exista en la misma carpeta
+import "./Reportes.css";
 
 const Reportes = () => {
   const [productos, setProductos] = useState(0);
@@ -27,78 +37,93 @@ const Reportes = () => {
   const [fechaInicioIndice, setFechaInicioIndice] = useState(-1);
   const [fechaFin, setFechaFin] = useState("");
   const [fechaFinIndice, setFechaFinIndice] = useState(-1);
-
   useEffect(() => {
     (async () => {
-      const totalProductos = await productosTotal();
-      setProductos(totalProductos);
-      const totalClientes = await clientesTotal();
-      setClientes(totalClientes);
-      const totalPedidos = await pedidosTotal();
-      setPedidos(totalPedidos);
-      const totalVentas = await ventasTotal();
-      setTotal(totalVentas);
+
+      try {
+        const totalProductos = await productosTotal();
+        setProductos(totalProductos);
+        const totalClientes = await clientesTotal();
+        setClientes(totalClientes);
+        const totalPedidos = await pedidosTotal();
+        setPedidos(totalPedidos);
+        const totalVentas = await ventasTotal();
+        setTotal(totalVentas);
+      } catch (error) {
+        
+      }
+
+    })();
+  }, []);
+  useEffect(() => {
+    (async () => {
+
+      try {
+        const pedidosRef = collectionGroup(db, "Pedidos");
+        const queryPedidos = query(pedidosRef, orderBy("Fecha", "desc"));
+        const consultaPedidos = await getDocs(queryPedidos);
+        const resultado = consultaPedidos?.docs?.map((doc) => ({
+          IdPedido: doc?.id,
+          Fecha: doc?.data()?.Fecha?.toDate()?.toLocaleDateString("en-GB"),
+          Venta: 1,
+        }));
+  
+        const agrupandoFechas = resultado?.reduce((groups, item) => {
+          var val = item["Fecha"];
+          groups[val] = groups[val] || {
+            Fecha: item.Fecha,
+            Venta: 0,
+          };
+          groups[val].Venta += item.Venta;
+          return groups;
+        }, {});
+  
+        setPedidosIndicador(Object.values(agrupandoFechas));
+      } catch (error) {
+        console.log(error)
+      }
+     
     })();
   }, []);
 
   useEffect(() => {
     (async () => {
-      const pedidosRef = collection(db, "Pedidos");
-      const queryPedidos = query(pedidosRef, orderBy("Fecha", "desc"));
-      const consultaPedidos = await getDocs(queryPedidos);
-      const resultado = consultaPedidos.docs.map((doc) => ({
-        IdPedido: doc.id,
-        Fecha: doc.data().Fecha.toDate().toLocaleDateString("en-GB"),
-        Venta: 1,
-      }));
-
-      const agrupandoFechas = resultado.reduce((groups, item) => {
-        var val = item["Fecha"];
-        groups[val] = groups[val] || {
-          Fecha: item.Fecha,
-          Venta: 0,
-        };
-        groups[val].Venta += item.Venta;
-        return groups;
-      }, {});
-
-      setPedidosIndicador(Object.values(agrupandoFechas));
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      const visitasRef = collection(db, "Visitas");
-      const queryVisitas = query(visitasRef, orderBy("Fecha", "desc"));
-      const visitasDB = await getDocs(queryVisitas);
-      var sumaTotalVisitas = 0;
-      const resultadoVisitas = visitasDB.docs.map((doc) => {
-        sumaTotalVisitas += doc.data().Cantidad;
-        return {
-          Fecha: doc.data().Fecha.toDate().toLocaleDateString("en-GB"),
-          Cantidad: doc.data().Cantidad,
-        };
-      });
-      setVisitas(sumaTotalVisitas);
-      const resultadoCombinar = pedidosIndicador.filter((eficacia) => {
-        const filtrarIndicadorJuntar = [];
-        resultadoVisitas.filter((tasa) => {
-          if (eficacia.Fecha === tasa.Fecha) {
-            const finalResult = Object.assign(eficacia, tasa);
-            filtrarIndicadorJuntar.push(finalResult);
-          }
-          return true;
+      try {
+        const visitasRef = collection(db, "Visitas");
+        const queryVisitas = query(visitasRef, orderBy("Fecha", "desc"));
+        const visitasDB = await getDocs(queryVisitas);
+        var sumaTotalVisitas = 0;
+        const resultadoVisitas = visitasDB.docs.map((doc) => {
+          sumaTotalVisitas += doc.data().Cantidad;
+          return {
+            Fecha: doc.data().Fecha.toDate().toLocaleDateString("en-GB"),
+            Cantidad: doc.data().Cantidad,
+          };
         });
-        return filtrarIndicadorJuntar;
-      });
-      setVisitasIndicador(resultadoCombinar);
+        setVisitas(sumaTotalVisitas);
+        const resultadoCombinar = pedidosIndicador.filter((eficacia) => {
+          const filtrarIndicadorJuntar = [];
+          resultadoVisitas.filter((tasa) => {
+            if (eficacia.Fecha === tasa.Fecha) {
+              const finalResult = Object.assign(eficacia, tasa);
+              filtrarIndicadorJuntar.push(finalResult);
+            }
+            return true;
+          });
+          return filtrarIndicadorJuntar;
+        });
+        setVisitasIndicador(resultadoCombinar);
+      } catch (error) {
+        
+      }
+     
     })();
   }, [pedidosIndicador]);
 
   const cambiarDatosInicio = (e) => {
     const valueFormatoInicio = e.target.value.split("-").reverse().join("/");
     const indiceFechaInicio = pedidosIndicador.findIndex(
-      (inicio) => inicio.Fecha === valueFormatoInicio
+      (inicio) => inicio.Fecha === valueFormatoInicio,
     );
     setFechaInicio(valueFormatoInicio);
     setFechaInicioIndice(indiceFechaInicio);
@@ -107,7 +132,7 @@ const Reportes = () => {
   const cambiarDatosFin = (e) => {
     const valueFormatoFin = e.target.value.split("-").reverse().join("/");
     const indiceFechaFin = pedidosIndicador.findIndex(
-      (fin) => fin.Fecha === valueFormatoFin
+      (fin) => fin.Fecha === valueFormatoFin,
     );
     setFechaFin(valueFormatoFin);
     setFechaFinIndice(indiceFechaFin);
@@ -117,11 +142,11 @@ const Reportes = () => {
     e.preventDefault();
     const rangoFechaPedidos = pedidosIndicador.slice(
       fechaFinIndice,
-      fechaInicioIndice + 1
+      fechaInicioIndice + 1,
     );
     const rangoFechaVisitas = visitasIndicador.slice(
       fechaFinIndice,
-      fechaInicioIndice + 1
+      fechaInicioIndice + 1,
     );
     if (rangoFechaPedidos.length !== 0 && rangoFechaVisitas.length !== 0) {
       setPedidosIndicadorFiltrado(rangoFechaPedidos);

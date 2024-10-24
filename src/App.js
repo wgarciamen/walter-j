@@ -5,11 +5,11 @@ import Routes from "./Routes";
 
 function App() {
   return (
-    <EstadoProveedor>
       <Router>
+    <EstadoProveedor>
         <Routes/>
-      </Router>
     </EstadoProveedor>
+      </Router>
   );
 }
 

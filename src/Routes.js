@@ -81,11 +81,11 @@ const RoutesComponent = () => {
 
       {/* RUTAS SEMIPRIVADAS */}
       <Route
-        path="/ingresar/administrador"
+        path="/registrar"
         element={
           <RutaSemiPrivada
+            component={GeneralRegistrar}
             layout={LayoutGeneral}
-            element={GeneralIngresarAdministrador}  // Pasamos correctamente el componente
           />
         }
       />
@@ -98,14 +98,14 @@ const RoutesComponent = () => {
 
       {/* RUTAS ADMINISTRADOR */}
       <Route
-  path="/administrador/reportes/*"
-  element={
-    <RutaAdministrador
-      layout={LayoutAdministracion}
-      component={AdmnistradorReportes}
-    />
-  }
-/>
+        path="/administrador/reportes"
+        element={
+          <RutaAdministrador
+            component={AdmnistradorReportes}
+            layout={LayoutAdministracion}
+          />
+        }
+      />
 
       <Route
         path="/administrador/categorias"

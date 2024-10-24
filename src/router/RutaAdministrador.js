@@ -1,45 +1,29 @@
-import React, { useContext } from "react";
-import { Route, Navigate, Routes } from "react-router-dom"; // Cambiado Redirect por Navigate
 import PropTypes from "prop-types";
+import React, { useContext } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { EstadoContexto } from "../context/EstadoGeneral";
 
-const RutaPrivada = (props) => {
-  const { layout: Layout, component: Component,location,...rest } = props;
+const RutaPrivadaAdmin = ({
+  layout: Layout,
+  component: Component,
+  ...rest
+}) => {
   const { usuario } = useContext(EstadoContexto);
-  const exiteUsuario = Object.keys(usuario).length;
+  const existeUsuario = Object.keys(usuario).length;
+  const location = useLocation();
 
-  return (
-    <Routes>
-      {exiteUsuario && usuario.Rol === "administrador" ? (
-        <Route
-          {...rest}
-          element={
-            <Layout>
-              <Component />
-            </Layout>
-          }
-        />
-      ) : (
-        <Route
-          path="*"
-          element={
-            <Navigate // Cambiado Redirect por Navigate
-              to={{
-                pathname: "/ingresar",
-                state: { from: location },
-              }}
-            />
-          }
-        />
-      )}
-    </Routes>
+  return existeUsuario && usuario?.Rol === "administrador" ? (
+    <Layout>
+      <Component {...rest} />
+    </Layout>
+  ) : (
+    <Navigate to="/ingresar" state={{ from: location }} />
   );
 };
 
-RutaPrivada.propTypes = {
-  component: PropTypes.any.isRequired,
-  layout: PropTypes.any.isRequired,
-  path: PropTypes.string,
+RutaPrivadaAdmin.propTypes = {
+  component: PropTypes.elementType.isRequired,
+  layout: PropTypes.elementType.isRequired,
 };
 
-export default RutaPrivada;
+export default RutaPrivadaAdmin;
