@@ -6,6 +6,7 @@ export { default as GeneralGraciasPorRegistrarte } from './General/Entrar/Gracia
 export { default as GeneralRecuperarContrasena } from './General/Entrar/RecuperarContrasena';
 export { default as GeneralVerificar } from './General/Entrar/Verificar'; 
 export { default as GeneralIngresarAdministrador } from './General/Entrar/IngresarAdministrador';
+export { default as GeneralCheckout } from './General/Checkout/Checkout';
 /* PAGINAS DE CLIENTES */
 export { default as ClientePerfil } from './Cliente/Perfil/Perfil';
 

@@ -11,20 +11,21 @@ import {
   GeneralGraciasPorRegistrarte,
   GeneralRecuperarContrasena,
   GeneralVerificar,
-  GeneralIngresarAdministrador, // Verificar que esta importación esté correcta
+  GeneralIngresarAdministrador,
+  GeneralCheckout,
   ClientePerfil,
-  AdmnistradorReportes,
-  AdmnistradorCategorias,
-  AdmnistradorCategoriasCrear,
-  AdmnistradorCategoriasEditar,
-  AdmnistradorEtiquetas,
-  AdmnistradorProductos,
-  AdmnistradorProductosCrear,
-  AdmnistradorProductosEditar,
-  AdmnistradorPersonales,
-  AdmnistradorPedidos,
-  AdmnistradorClientes,
-} from "./pages";
+  AdmnistradorReportes, // Manteniendo la escritura original
+  AdmnistradorCategorias, // Manteniendo la escritura original
+  AdmnistradorCategoriasCrear, // Manteniendo la escritura original
+  AdmnistradorCategoriasEditar, // Manteniendo la escritura original
+  AdmnistradorEtiquetas, // Manteniendo la escritura original
+  AdmnistradorProductos, // Manteniendo la escritura original
+  AdmnistradorProductosCrear, // Manteniendo la escritura original
+  AdmnistradorProductosEditar, // Manteniendo la escritura original
+  AdmnistradorPersonales, // Manteniendo la escritura original
+  AdmnistradorPedidos, // Manteniendo la escritura original
+  AdmnistradorClientes, // Manteniendo la escritura original
+} from "./pages"; // Asegúrate de que estos componentes están correctamente exportados en "./pages"
 
 const RoutesComponent = () => {
   return (
@@ -35,6 +36,14 @@ const RoutesComponent = () => {
         element={
           <LayoutGeneral>
             <GeneralInicio />
+          </LayoutGeneral>
+        }
+      />
+      <Route
+        path="/checkout"
+        element={
+          <LayoutGeneral>
+            <GeneralCheckout />
           </LayoutGeneral>
         }
       />
@@ -84,16 +93,31 @@ const RoutesComponent = () => {
         path="/registrar"
         element={
           <RutaSemiPrivada
-            component={GeneralRegistrar}
             layout={LayoutGeneral}
+            component={GeneralRegistrar}
           />
+        }
+      />
+
+      <Route
+        path="/ingresar/administrador"
+        element={
+          <LayoutGeneral>
+            <GeneralIngresarAdministrador />
+          </LayoutGeneral>
         }
       />
 
       {/* RUTAS CLIENTE */}
       <Route
         path="/cliente/perfil"
-        element={<RutaCliente layout={LayoutCliente} component={ClientePerfil} />}
+        element={
+          <RutaCliente>
+            <LayoutCliente>
+              <ClientePerfil />
+            </LayoutCliente>
+          </RutaCliente>
+        }
       />
 
       {/* RUTAS ADMINISTRADOR */}
@@ -101,8 +125,8 @@ const RoutesComponent = () => {
         path="/administrador/reportes"
         element={
           <RutaAdministrador
-            component={AdmnistradorReportes}
             layout={LayoutAdministracion}
+            component={AdmnistradorReportes}
           />
         }
       />

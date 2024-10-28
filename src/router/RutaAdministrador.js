@@ -3,11 +3,10 @@ import React, { useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { EstadoContexto } from "../context/EstadoGeneral";
 
-const RutaPrivadaAdmin = ({
-  layout: Layout,
-  component: Component,
-  ...rest
-}) => {
+const RutaPrivadaAdmin = ({ layout: Layout, component: Component, ...rest }) => {
+  console.log("Layout:", Layout); // Depuración
+  console.log("Component:", Component); // Depuración
+
   const { usuario } = useContext(EstadoContexto);
   const existeUsuario = Object.keys(usuario).length;
   const location = useLocation();
