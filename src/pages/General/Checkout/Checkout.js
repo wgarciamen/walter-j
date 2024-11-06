@@ -20,7 +20,7 @@ const Checkout = () => {
 
   const [formDireccion, setFormDireccion] = useState(initFormDireccion);
   const [escogerDireccion, setEscogerDireccion] = useState("tienda");
-  let direccionTienda = "Calle ucayali 590";
+  let direccionTienda = "LIMA";
   useEffect(() => {
     if (exiteUsuario) {
       (async () => {
@@ -125,7 +125,7 @@ const Checkout = () => {
                           <label htmlFor="tienda">Recoger en tienda: </label>{" "}
                         </td>
                         <td>
-                          <label>Dirección de Tienda Logan: </label>
+                          <label>Dirección de Tienda WGM: </label>
                           <span>{direccionTienda}</span>
                         </td>
                       </tr>

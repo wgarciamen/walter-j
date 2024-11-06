@@ -83,7 +83,7 @@
   margin-top: 20px;
 }
 
-.grid-registro-formulario  input[type="text"], .grid-registro-formulario  input[type="password"] {
+.grid-registro-formulario  input[type="text"], .grid-registro-formulario  input[type="password"], .grid-registro-formulario  input[type="email"] {
   margin-top: 10px;
   display: block;
   font-family: inherit;
@@ -94,7 +94,8 @@
   width: 100%;
   border: solid 1px #e4e4e4;
 }
-.grid-registro-formulario  input[type="text"]:focus, 
+.grid-registro-formulario  input[type="text"]:focus,
+.grid-registro-formulario  input[type="email"]:focus, 
 .grid-registro-formulario  input[type="password"]:focus {
   /* CAMBIO 3: Añadí un borde y sombra para cuando el input tenga foco */
   border-color: #ff0000;

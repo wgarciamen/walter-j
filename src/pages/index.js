@@ -7,8 +7,11 @@ export { default as GeneralRecuperarContrasena } from './General/Entrar/Recupera
 export { default as GeneralVerificar } from './General/Entrar/Verificar'; 
 export { default as GeneralIngresarAdministrador } from './General/Entrar/IngresarAdministrador';
 export { default as GeneralCheckout } from './General/Checkout/Checkout';
+
 /* PAGINAS DE CLIENTES */
 export { default as ClientePerfil } from './Cliente/Perfil/Perfil';
+export { default as ClienteConfirmacion } from './Cliente/Confirmacion/Confirmacion';
+export { default as ClienteCompras } from './Cliente/Compras/Compras'; // Exportación de ClienteCompras añadida
 
 /* PAGINAS DE ADMINISTRADORES */
 export { default as AdmnistradorReportes } from './Administrador/Reportes/Reportes';
@@ -22,8 +25,6 @@ export { default as AdmnistradorProductosEditar } from './Administrador/Producto
 export { default as AdmnistradorPersonales } from './Administrador/Personales/Personales';
 export { default as AdmnistradorPedidos } from './Administrador/Pedidos/Pedidos';
 export { default as AdmnistradorClientes } from './Administrador/Clientes/Clientes';
- 
-
 
 /* PAGINAS NO ENCONTRADAS */
 export { default as Pagina404 } from './Pagina404/Pagina404';

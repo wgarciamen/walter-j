@@ -1,7 +1,11 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { RutaCliente, RutaAdministrador, RutaSemiPrivada } from "./router";
-import { LayoutGeneral, LayoutCliente, LayoutAdministracion } from "./layout/conLayout";
+import {
+  LayoutGeneral,
+  LayoutCliente,
+  LayoutAdministracion,
+} from "./layout/conLayout";
 import SinLayout from "./layout/SinLayout/SinLayout";
 import {
   Pagina404,
@@ -14,6 +18,8 @@ import {
   GeneralIngresarAdministrador,
   GeneralCheckout,
   ClientePerfil,
+  ClienteConfirmacion,
+  ClienteCompras,
   AdmnistradorReportes, // Manteniendo la escritura original
   AdmnistradorCategorias, // Manteniendo la escritura original
   AdmnistradorCategoriasCrear, // Manteniendo la escritura original
@@ -112,11 +118,25 @@ const RoutesComponent = () => {
       <Route
         path="/cliente/perfil"
         element={
-          <RutaCliente>
-            <LayoutCliente>
-              <ClientePerfil />
-            </LayoutCliente>
-          </RutaCliente>
+          <RutaCliente component={ClientePerfil} layout={LayoutCliente} />
+        }
+      />
+
+      <Route
+        path="/cliente/confirmacion"
+        element={
+          <LayoutCliente>
+            <ClienteConfirmacion />
+          </LayoutCliente>
+        }
+      />
+
+      <Route
+        path="/cliente/mis-compras"
+        element={
+          <LayoutCliente>
+            <ClienteCompras />
+          </LayoutCliente>
         }
       />
 

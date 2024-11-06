@@ -1,39 +1,84 @@
 .contenedor-reportes-card {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(auto, 200px);
-  gap: 8px;
-  flex: wrap;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  width: 80%; /* Ajusta este valor según el espacio que quieres que ocupe */
+  max-width: 1200px; /* Limita el ancho máximo */
+  padding: 20px;
+  box-sizing: border-box;
+  margin: 0 auto; /* Centra el contenedor en la página */
+  transform: translateX(95px); /* Desplaza el contenedor 20px hacia la derecha */
 }
 
+
+
+/* Estilo de cada tarjeta */
 .card-reporte {
   display: flex;
-  justify-content: center;
-  height: 100px;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-}
-
-.card-reporte h6,
-.card-reporte h3 {
+  height: 120px; /* Altura fija para mantenerlas uniformes */
+  border-radius: 8px;
   color: white;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-.contenedor-reportes-barras {
+.card-reporte:nth-child(odd) {
+  background-color: red;
+}
+
+.card-reporte:nth-child(even) {
+  background-color: black;
+}
+
+.card-reporte h6 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.card-reporte h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+
+/* Estilo para centrar y ajustar el tamaño del formulario */
+form {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   align-items: center;
+  width: 50%; /* Ajusta el tamaño del formulario */
+  max-width: 400px; /* Define un ancho máximo */
+  margin: 20px auto; /* Centra horizontalmente */
+  background-color: red;
+  padding: 15px;
+  border-radius: 8px;
 }
 
-@media screen and (max-width: 900px) {
-  .contenedor-reportes-card {
-    grid-template-columns: repeat(3, 1fr);
-  }
+form label,
+form input[type="date"] {
+  margin: 5px 0; /* Espaciado entre elementos */
 }
 
-@media screen and (max-width: 400px) {
-  .contenedor-reportes-card {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.boton-formulario {
+  background-color: white;
+  color: red;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Estilo para centrar el título del reporte */
+h3 {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 10px;
 }
