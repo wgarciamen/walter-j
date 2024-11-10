@@ -1,9 +1,9 @@
 
+import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; 
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getAnalytics } from "firebase/analytics";
 
 
 // Tu configuración de Firebase
@@ -16,7 +16,7 @@ const firebaseConfig = {
   appId: "1:442864841872:web:d2acbea877b657d9d1d415",
   measurementId: "G-TTWQXZ01H0"
 };
-
+ 
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -24,4 +24,5 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const analytics = getAnalytics();
 
-export { auth, db, storage, analytics };
+export { analytics, auth, db, storage };
+

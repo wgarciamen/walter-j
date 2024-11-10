@@ -2,7 +2,7 @@ import { eventosClick } from "../controllers/Analytics";
 
 export default function EnviarWhatsAppCarrito(products, total) {
   eventosClick(total);
-  const numeroCelular = "936234467";
+  const numeroCelular = "924034125";
   let saltoLinea = "%0D%0A";
   var descripcionProductos = products.map(function (des) {
     return (

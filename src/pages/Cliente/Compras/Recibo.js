@@ -129,7 +129,7 @@ const Recibo = ({ pedido }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  Celular: 936234467
+                  Celular: 924034125
                 </Text>
               </View>
             </View>

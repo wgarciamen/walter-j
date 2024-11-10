@@ -10,7 +10,7 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../db/firebase";
 const coleccion = "Categorias";
-const rutaFoto = "categorias-imagenes";
+const rutaFoto = "Categorias-imagenes";
 
 /* CREAR UNA CATEGORIA SIN IMAGEN */
 export const categoriaCrearSF = async (formCategoria, url) => {
@@ -39,7 +39,7 @@ export const categoriaCrearCF = (formCategoria, foto) => {
       });
     })
     .catch((error) => {
-      console.error("Error al subir iamgen", error);
+      console.error("Error al subir imagen", error);
     });
 };
 

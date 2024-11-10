@@ -94,7 +94,7 @@ const FormularioPagar = ({ direccion }) => {
             className="card-empresa-iconos"
           >
             <img src="/icons/GeneralIconoWhatsApp.svg" alt="logo" />
-            <p>Ayuda al WhatsApp 936234467</p>
+            <p>Ayuda al WhatsApp 924034125</p>
           </button>
         </div>
       </div>
