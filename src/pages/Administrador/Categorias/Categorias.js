@@ -1,39 +1,48 @@
-import React, { useState, useEffect } from "react";
+import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { db } from "../../../db/firebase";
-import { collection, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import { TablaCategoria } from "../../../components/Tablas";
+import { db } from "../../../db/firebase";
+import "./Categorias.css";
 
 const Categorias = () => {
   const [categorias, setCategorias] = useState([]);
 
   useEffect(() => {
-    onSnapshot(collection(db, "Categorias"), (snapshot) => {
+    const unsubscribe = onSnapshot(collection(db, "Categorias"), (snapshot) => {
       setCategorias(
         snapshot.docs.map((doc) => ({
           IdCategoria: doc.id,
-          ...doc.data()
+          ...doc.data(),
         }))
       );
     });
+
+    return () => unsubscribe();
   }, []);
 
   const eliminarCategoria = async (idCategoria) => {
-    await deleteDoc(doc(db, "Categorias", idCategoria));
+    if (window.confirm("¿Estás seguro de eliminar esta categoría?")) {
+      await deleteDoc(doc(db, "Categorias", idCategoria));
+    }
   };
 
   return (
-    <>
-      <h2>Categorias</h2>
-      <Link to="/administrador/categoria-crear">
-        <button className="boton-formulario">AGREGAR NUEVA CATEGORIA</button>
+    <div className="categorias-container">
+      <h2 className="titulo-categorias">Gestión de Categorías</h2>
+
+      <Link to="/administrador/categoria-crear" className="link-agregar-categoria">
+        <button className="boton-agregar">Agregar Nueva Categoría</button>
       </Link>
+
       {categorias?.length === 0 ? (
-        <></>
+        <p className="mensaje-vacio">No hay categorías registradas.</p>
       ) : (
-        <TablaCategoria categorias={categorias} eliminar={eliminarCategoria} />
+        <div className="tabla-categorias">
+          <TablaCategoria categorias={categorias} eliminar={eliminarCategoria} />
+        </div>
       )}
-    </>
+    </div>
   );
 };
 

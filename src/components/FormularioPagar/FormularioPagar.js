@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react";
 import Axios from "axios";
+import React, { useContext, useState } from "react";
 import { EstadoContexto } from "../../context/EstadoGeneral";
 import { agregarCarrito } from "../../controllers/Carrito";
 import EnviarWhatsAppCarrito from "../../util/EnviarWhatsAppCarrito";
 import CargandoPagina from "./CargandoPagina";
 import "./FormularioPagar.css";
 let functionGenerarID =
-  "https://us-central1-ecommerce-logan-29604.cloudfunctions.net/crearIdMP";
+  "http://127.0.0.1:5001/ecomers-walter/us-central1/helloworld";
 //let functionGenerarID =  "http://localhost:5001/ecommerce-logan-29604/us-central1/crearIdMP";
 
 const FormularioPagar = ({ direccion }) => {
@@ -26,7 +26,7 @@ const FormularioPagar = ({ direccion }) => {
         data: JSON.stringify(productos),
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "https://mochilaslogan.com",
+          "Access-Control-Allow-Origin": "http://localhost:3000/",
         },
         withCredentials: true,
       });

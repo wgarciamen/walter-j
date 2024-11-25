@@ -1,26 +1,7 @@
-import {
-  collection,
-  collectionGroup,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import {
-  TablaConversion,
-  TablaNivelEficacia,
-} from "../../../components/Tablas";
+import { Chart } from "react-google-charts";
 import { db } from "../../../db/firebase";
-import GraficoBarrasEficacia from "./GraficoBarrasEficacia";
-import GraficoBarrasVisitas from "./GraficoBarrasVisitas";
-
-import {
-  clientesTotal,
-  pedidosTotal,
-  productosTotal,
-  ventasTotal,
-} from "../../../controllers/Reportes";
-
 import "./Reportes.css";
 
 const Reportes = () => {
@@ -28,231 +9,128 @@ const Reportes = () => {
   const [clientes, setClientes] = useState(0);
   const [pedidos, setPedidos] = useState(0);
   const [total, setTotal] = useState(0);
-  const [totalVisitas, setVisitas] = useState(0);
-  const [pedidosIndicador, setPedidosIndicador] = useState([]);
-  const [pedidosIndicadorFiltrado, setPedidosIndicadorFiltrado] = useState([]);
-  const [visitasIndicador, setVisitasIndicador] = useState([]);
-  const [visitasIndicadorFiltrado, setVisitasIndicadorFiltrado] = useState([]);
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaInicioIndice, setFechaInicioIndice] = useState(-1);
-  const [fechaFin, setFechaFin] = useState("");
-  const [fechaFinIndice, setFechaFinIndice] = useState(-1);
+  const [visitas, setVisitas] = useState(0);
+  const [chartData, setChartData] = useState([]);
+
   useEffect(() => {
-    (async () => {
-
-      try {
-        const totalProductos = await productosTotal();
-        setProductos(totalProductos);
-        const totalClientes = await clientesTotal();
-        setClientes(totalClientes);
-        const totalPedidos = await pedidosTotal();
-        setPedidos(totalPedidos);
-        const totalVentas = await ventasTotal();
-        setTotal(totalVentas);
-      } catch (error) {
-        
-      }
-
-    })();
-  }, []);
-  useEffect(() => {
-    (async () => {
-
-      try {
-        const pedidosRef = collectionGroup(db, "Pedidos");
-        const queryPedidos = query(pedidosRef, orderBy("Fecha", "desc"));
-        const consultaPedidos = await getDocs(queryPedidos);
-        const resultado = consultaPedidos?.docs?.map((doc) => ({
-          IdPedido: doc?.id,
-          Fecha: doc?.data()?.Fecha?.toDate()?.toLocaleDateString("en-GB"),
-          Venta: 1,
-        }));
-  
-        const agrupandoFechas = resultado?.reduce((groups, item) => {
-          var val = item["Fecha"];
-          groups[val] = groups[val] || {
-            Fecha: item.Fecha,
-            Venta: 0,
-          };
-          groups[val].Venta += item.Venta;
-          return groups;
-        }, {});
-  
-        setPedidosIndicador(Object.values(agrupandoFechas));
-      } catch (error) {
-        console.log(error)
-      }
-     
-    })();
+    actualizarDatos();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const visitasRef = collection(db, "Visitas");
-        const queryVisitas = query(visitasRef, orderBy("Fecha", "desc"));
-        const visitasDB = await getDocs(queryVisitas);
-        var sumaTotalVisitas = 0;
-        const resultadoVisitas = visitasDB.docs.map((doc) => {
-          sumaTotalVisitas += doc.data().Cantidad;
-          return {
-            Fecha: doc.data().Fecha.toDate().toLocaleDateString("en-GB"),
-            Cantidad: doc.data().Cantidad,
-          };
-        });
-        setVisitas(sumaTotalVisitas);
-        const resultadoCombinar = pedidosIndicador.filter((eficacia) => {
-          const filtrarIndicadorJuntar = [];
-          resultadoVisitas.filter((tasa) => {
-            if (eficacia.Fecha === tasa.Fecha) {
-              const finalResult = Object.assign(eficacia, tasa);
-              filtrarIndicadorJuntar.push(finalResult);
-            }
-            return true;
-          });
-          return filtrarIndicadorJuntar;
-        });
-        setVisitasIndicador(resultadoCombinar);
-      } catch (error) {
-        
-      }
-     
-    })();
-  }, [pedidosIndicador]);
+  const actualizarDatos = async () => {
+    try {
+      const hoy = new Date();
+      const fechaInicio = new Date(hoy.setMonth(hoy.getMonth() - 1)); // Último mes
 
-  const cambiarDatosInicio = (e) => {
-    const valueFormatoInicio = e.target.value.split("-").reverse().join("/");
-    const indiceFechaInicio = pedidosIndicador.findIndex(
-      (inicio) => inicio.Fecha === valueFormatoInicio,
-    );
-    setFechaInicio(valueFormatoInicio);
-    setFechaInicioIndice(indiceFechaInicio);
-  };
+      // Obtener pedidos
+      const pedidosRef = collection(db, "Pedidos");
+      const pedidosQuery = query(
+        pedidosRef,
+        where("Fecha", ">=", fechaInicio),
+        orderBy("Fecha", "asc")
+      );
+      const pedidosSnapshot = await getDocs(pedidosQuery);
+      const datosPedidos = [];
+      pedidosSnapshot.forEach((doc) => {
+        const fecha = doc.data().Fecha.toDate(); // Aseguramos que es un objeto Date
+        datosPedidos.push(fecha);
+      });
 
-  const cambiarDatosFin = (e) => {
-    const valueFormatoFin = e.target.value.split("-").reverse().join("/");
-    const indiceFechaFin = pedidosIndicador.findIndex(
-      (fin) => fin.Fecha === valueFormatoFin,
-    );
-    setFechaFin(valueFormatoFin);
-    setFechaFinIndice(indiceFechaFin);
-  };
+      // Agrupar pedidos por semanas
+      const pedidosPorSemana = agruparPorSemanas(datosPedidos);
 
-  const filtrarRangoFecha = (e) => {
-    e.preventDefault();
-    const rangoFechaPedidos = pedidosIndicador.slice(
-      fechaFinIndice,
-      fechaInicioIndice + 1,
-    );
-    const rangoFechaVisitas = visitasIndicador.slice(
-      fechaFinIndice,
-      fechaInicioIndice + 1,
-    );
-    if (rangoFechaPedidos.length !== 0 && rangoFechaVisitas.length !== 0) {
-      setPedidosIndicadorFiltrado(rangoFechaPedidos);
-      setVisitasIndicadorFiltrado(rangoFechaVisitas);
+      // Datos simulados de visitas (puedes reemplazarlos con datos reales)
+      const visitasSimuladas = [
+        { semana: "Semana 1", cantidad: 15 },
+        { semana: "Semana 2", cantidad: 8 },
+        { semana: "Semana 3", cantidad: 5 },
+        { semana: "Semana 4", cantidad: 12 },
+      ];
+
+      const datosGrafico = [["Semana", "Pedidos", "Visitas"]];
+      pedidosPorSemana.forEach((pedidosSemana, index) => {
+        const visitasSemana = visitasSimuladas[index]?.cantidad || 0;
+        datosGrafico.push([`Semana ${index + 1}`, pedidosSemana, visitasSemana]);
+      });
+
+      console.log("Datos del gráfico:", datosGrafico); // Verificar datos en consola
+      setChartData(datosGrafico);
+
+      // Actualizar métricas adicionales
+      setPedidos(datosPedidos.length);
+      setVisitas(visitasSimuladas.reduce((acc, curr) => acc + curr.cantidad, 0));
+      setProductos(await productosTotal());
+      setClientes(await clientesTotal());
+      setTotal(await ventasTotal());
+    } catch (error) {
+      console.error("Error al actualizar datos:", error);
     }
   };
 
+  const agruparPorSemanas = (fechas) => {
+    const semanas = [0, 0, 0, 0]; // Cuatro semanas
+    fechas.forEach((fecha) => {
+      const semana = Math.ceil(fecha.getDate() / 7); // Calcular la semana
+      semanas[semana - 1] += 1; // Incrementar el contador de esa semana
+    });
+    return semanas;
+  };
+
+  const chartOptions = {
+    title: "Ventas por semana del último mes",
+    hAxis: { title: "Semanas" },
+    vAxis: { title: "Cantidad" },
+    legend: { position: "bottom" },
+    colors: ["#FF0000", "#000000"], // Colores para pedidos y visitas
+  };
+
   return (
-    <>
+    <div style={{ padding: "20px" }}>
+      <h2 className="titulo-dashboard">Dashboard de Reportes</h2>
       <div className="contenedor-reportes-card">
-        <div className="card-reporte" style={{ backgroundColor: "red" }}>
-          <h6>VENTAS</h6>
+        <div className="card-reporte">
+          <h6>Ventas</h6>
           <h3>S/.{total}.00</h3>
         </div>
-        <div className="card-reporte" style={{ backgroundColor: "black" }}>
-          <h6>PEDIDOS</h6>
+        <div className="card-reporte">
+          <h6>Pedidos</h6>
           <h3>{pedidos}</h3>
         </div>
-        <div className="card-reporte" style={{ backgroundColor: "red" }}>
-          <h6>VISITAS</h6>
-          <h3>{totalVisitas}</h3>
+        <div className="card-reporte">
+          <h6>Visitas</h6>
+          <h3>{visitas}</h3>
         </div>
-        <div className="card-reporte" style={{ backgroundColor: "black" }}>
-          <h6>PRODUCTOS</h6>
+        <div className="card-reporte">
+          <h6>Productos</h6>
           <h3>{productos}</h3>
         </div>
-        <div className="card-reporte" style={{ backgroundColor: "red" }}>
-          <h6>CLIENTES</h6>
+        <div className="card-reporte">
+          <h6>Clientes</h6>
           <h3>{clientes}</h3>
         </div>
       </div>
-      <div>
-        <div>
-          <form onSubmit={filtrarRangoFecha}>
-            <label htmlFor="fechaInicio">Fecha inicio:</label>
-            <input
-              type="date"
-              id="fechaInicio"
-              name="fechaInicio"
-              required
-              value={fechaInicio.split("/").reverse().join("-")}
-              onChange={cambiarDatosInicio}
-            />
-            <label htmlFor="fechaFin">Fecha fin:</label>
-            <input
-              type="date"
-              id="fechaFin"
-              name="fechaFin"
-              required
-              value={fechaFin.split("/").reverse().join("-")}
-              onChange={cambiarDatosFin}
-            />
-            <input
-              className={"boton-formulario"}
-              type="submit"
-              value="Filtrar rango fecha"
-            />
-          </form>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "10px",
-          }}
-        >
-          <h3>Reporte de nivel de eficacia</h3>
-        </div>
-        {pedidosIndicador?.length === 0 ? (
-          <p>No hay resultados</p>
-        ) : (
-          <>
-            <TablaNivelEficacia
-              pedidos={
-                pedidosIndicadorFiltrado.length !== 0
-                  ? pedidosIndicadorFiltrado
-                  : pedidosIndicador
-              }
-            />
-            {pedidosIndicadorFiltrado?.length !== 0 && (
-              <GraficoBarrasEficacia pedidos={pedidosIndicadorFiltrado} />
-            )}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "10px",
-              }}
-            >
-              <h3>Reporte de tasa de conversión</h3>
-            </div>
-            <TablaConversion
-              visitas={
-                visitasIndicadorFiltrado.length !== 0
-                  ? visitasIndicadorFiltrado
-                  : visitasIndicador
-              }
-            />
-            {visitasIndicadorFiltrado?.length !== 0 && (
-              <GraficoBarrasVisitas visitas={visitasIndicadorFiltrado} />
-            )}
-          </>
-        )}
+
+      <div className="google-visualization-chart">
+        <Chart
+          chartType="ColumnChart"
+          width="100%"
+          height="400px"
+          data={chartData}
+          options={chartOptions}
+        />
       </div>
-    </>
+    </div>
   );
 };
 
 export default Reportes;
+
+// Funciones simuladas para datos adicionales
+async function productosTotal() {
+  return 10; // Simulación
+}
+async function clientesTotal() {
+  return 5; // Simulación
+}
+async function ventasTotal() {
+  return 500; // Simulación
+}

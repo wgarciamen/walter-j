@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
 import Axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { carritoTraerUno } from "../../../controllers/Carrito";
 
 let functionsPagarMP =
-  "https://us-central1-ecommerce-logan-29604.cloudfunctions.net/creaPagoMP";
+  "http://127.0.0.1:5001/ecomers-walter/us-central1/creaPagoMP";
 //let functionsPagarMP = "http://localhost:5001/ecommerce-logan-29604/us-central1/creaPagoMP";
 
 const Confirmacion = () => {
@@ -34,7 +34,7 @@ const Confirmacion = () => {
           data: JSON.stringify(pedido),
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "https://mochilaslogan.com",
+            "Access-Control-Allow-Origin": "http://localhost:3000/",
           },
           withCredentials: true,
         });

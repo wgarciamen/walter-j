@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
+import { PDFViewer } from "@react-pdf/renderer";
+import React, { useContext, useEffect, useState } from "react";
 import { EstadoContexto } from "../../../context/EstadoGeneral";
 import { pedidosTodos } from "../../../controllers/Pedidos";
-import { PDFViewer } from "@react-pdf/renderer";
-import Recibo from "./Recibo";
 import "./Compras.css";
+import Recibo from "./Recibo";
 
 const Compras = () => {
   const { usuario } = useContext(EstadoContexto);
@@ -37,7 +37,7 @@ const Compras = () => {
               fontWeight: "bolder",
             }}
           >
-            Cerrar COMPROBANTE DE PAGO "( X )"
+            CERRAR COMPROBANTE DE PAGO "( X )"
           </button>
           <PDFViewer style={{ width: "100%", height: "100vh" }}>
             <Recibo pedido={infoPedido} />
@@ -161,10 +161,10 @@ const Compras = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      Producto para recoger en Tienda Logan
+                      Producto para recoger en Tienda WGM
                     </p>
                     <hr />
-                    <label>Dirección tienda LOGAN: </label>
+                    <label>Dirección tienda WGM: </label>
                     <span>{pedido.Direccion}</span>
                   </>
                 )}

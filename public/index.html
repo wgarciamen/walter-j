@@ -24,7 +24,17 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>WGM</title>
+    <style>
+      df-messenger {
+       --df-messenger-bot-message:red;
+       --df-messenger-button-titlebar-color:black;
+       --df-messenger-chat-background-color: #fafafa;
+       --df-messenger-font-color: white;
+       --df-messenger-send-icon: #878fac;
+       --df-messenger-user-message: black;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -39,5 +49,16 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+    intent="WELCOME"
+    chat-title="WGM"
+    agent-id="49862d41-50f6-40a7-86b8-2e95e8845fda"
+    chat-icon="iconowgm.png"
+    language-code="es"
+ ></df-messenger>
+ 
+
   </body>
 </html>

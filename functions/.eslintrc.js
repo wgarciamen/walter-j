@@ -15,7 +15,10 @@ module.exports = {
     "prefer-arrow-callback": "error",
     "quotes": ["error", "double", {"allowTemplateLiterals": true}],
     "max-len": ["error", {"code": 100}],
+    "indent": ["error", 2],
+    "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
   },
+
   overrides: [
     {
       files: ["**/*.spec.*"],

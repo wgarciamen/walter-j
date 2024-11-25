@@ -1,60 +1,88 @@
+// Importa las bibliotecas necesarias
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const cors = require("cors")({
-  origin: ["http://localhost:5001", "http://localhost:3000"],
-  methods: ["POST"],
-  credentials: true,
+const {WebhookClient, Payload} = require("dialogflow-fulfillment");
+
+// Inicializa la aplicación de Firebase
+admin.initializeApp();
+const db = admin.firestore();
+
+// Función creaPago (sin MercadoPago)
+exports.creaPago = functions.https.onRequest((req, res) => {
+  res.send("Hello from creaPago!");
 });
 
-const mercadopago = require("mercadopago");
+/**
+ * Consulta el estado del pedido por número de pedido.
+ * @param {object} agent - Objeto del WebhookClient de Dialogflow.
+ * @return {Promise<void>} - Una promesa que se resuelve cuando se completa la consulta del pedido.
+ */
+function consultarPedido(agent) {
+  const idPedido = agent.parameters.TipoNumeroPedido;
 
-mercadopago.configure({
-  access_token: "APP_USR-1250593922113004-110818-1a81b371446806e3449e3a9b051a3e89-2087266204",
-});
+  if (idPedido) {
+    const pedidosRef = db.collectionGroup("Pedidos").where("NumeroPedido", "==", idPedido);
 
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  databaseURL: "https://ecomers-walter.firebaseio.com",
-});
-
-exports.crearIdMP = functions.https.onRequest((req, res) => {
-  cors(req, res, () => {
-    const listItems = req.body;
-    const productosEnviar = listItems.map((item) => ({
-      title: item.Nombre,
-      unit_price: parseFloat(item.Precio),
-      quantity: item.Unidades,
-    }));
-
-    const preference = {
-      items: productosEnviar,
-      back_urls: {
-        success: "http://localhost:3000/cliente/confirmacion",
-        failure: "http://localhost:3000/cliente/error",
-        pending: "http://localhost:3000/",
-      },
-      auto_return: "approved",
-    };
-
-    mercadopago.preferences
-        .create(preference)
-        .then((response) => {
-          console.log("REDIRECT BACKEND:", response.body);
-          res.set("Access-Control-Allow-Origin", "http://localhost:3000");
-          res.set("Access-Control-Allow-Methods", "POST");
-          res.set("Access-Control-Allow-Headers", "Content-Type");
-          res.set("Access-Control-Max-Age", "3600");
-          res.set("Access-Control-Allow-Credentials", "true");
-
-          return res.status(200).send({
-            id: response.body.id,
-            url: response.body.init_point,
-            urlSandbox: response.body.sandbox_init_point,
-          });
-        })
-        .catch((error) => {
-          console.log("Error:", error);
-          return res.status(500).send(error);
+    return pedidosRef
+      .get()
+      .then((querySnapshot) => {
+        const pedidosArray = [];
+        querySnapshot.forEach((doc) => {
+          pedidosArray.push({IdPedido: doc.id, ...doc.data()});
         });
-  }); // Cierra el bloque `cors`
-}); // Cierra el bloque `exports.crearIdMP`
+
+        if (pedidosArray.length > 0) {
+          agent.add(`Hola: ${pedidosArray[0].Nombres}`);
+          agent.add(`El estado de tu pedido es: ${pedidosArray[0].Estado}`);
+          agent.add("Compraste estos productos:");
+
+          const productosArray = pedidosArray[0].Productos.map((producto) => {
+            return {
+              text: producto.Nombre,
+              link: producto.UrlProducto,
+              image: {
+                src: {
+                  rawUrl: producto.ImagenesUrl[0],
+                },
+              },
+            };
+          });
+
+          const payload = {
+            richContent: [
+              [
+                {
+                  type: "chips",
+                  options: productosArray,
+                },
+              ],
+            ],
+          };
+          agent.add(
+            new Payload(agent.UNSPECIFIED, payload, {
+              rawPayload: true,
+              sendAsMessage: true,
+            }),
+          );
+          agent.add(`En la fecha: ${pedidosArray[0].Fecha.toDate().toLocaleDateString()}`);
+          agent.add(`Espero haberte ayudado: ${pedidosArray[0].Nombres}`);
+        } else {
+          agent.add("No se encontró ningún pedido con el número proporcionado.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al consultar el pedido:", error);
+        agent.add("Ocurrió un error al consultar el pedido. Intenta de nuevo más tarde.");
+      });
+  } else {
+    agent.add("Ingresa tu número de pedido correctamente.");
+  }
+}
+
+// Mapa de intenciones y manejo del chatbot
+exports.chatbot = functions.https.onRequest((request, response) => {
+  const agent = new WebhookClient({request, response});
+  const intentMap = new Map(); // Usa 'const' para el intentMap
+  intentMap.set("ConsultarPedido", consultarPedido);
+  agent.handleRequest(intentMap);
+});

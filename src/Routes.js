@@ -1,42 +1,44 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { RutaCliente, RutaAdministrador, RutaSemiPrivada } from "./router";
+import { Navigate, Route, Routes } from "react-router-dom";
 import {
-  LayoutGeneral,
-  LayoutCliente,
   LayoutAdministracion,
+  LayoutCliente,
+  LayoutGeneral,
 } from "./layout/conLayout";
 import SinLayout from "./layout/SinLayout/SinLayout";
 import {
-  Pagina404,
-  GeneralInicio,
-  GeneralRegistrar,
-  GeneralIngresar,
-  GeneralGraciasPorRegistrarte,
-  GeneralRecuperarContrasena,
-  GeneralVerificar,
-  GeneralIngresarAdministrador,
-  GeneralCheckout,
-  ClientePerfil,
-  ClienteConfirmacion,
-  ClienteCompras,
-  AdmnistradorReportes, // Manteniendo la escritura original
   AdmnistradorCategorias, // Manteniendo la escritura original
   AdmnistradorCategoriasCrear, // Manteniendo la escritura original
   AdmnistradorCategoriasEditar, // Manteniendo la escritura original
+  AdmnistradorClientes,
+  // Manteniendo la escritura original
   AdmnistradorEtiquetas, // Manteniendo la escritura original
+  AdmnistradorPedidos, // Manteniendo la escritura original
+  AdmnistradorPersonales, // Manteniendo la escritura original
   AdmnistradorProductos, // Manteniendo la escritura original
   AdmnistradorProductosCrear, // Manteniendo la escritura original
-  AdmnistradorProductosEditar, // Manteniendo la escritura original
-  AdmnistradorPersonales, // Manteniendo la escritura original
-  AdmnistradorPedidos, // Manteniendo la escritura original
-  AdmnistradorClientes, // Manteniendo la escritura original
+  AdmnistradorProductosEditar,
+  AdmnistradorReportes,
+  ClienteCompras,
+  ClienteConfirmacion,
+  ClientePerfil,
+  GeneralCheckout,
+  GeneralGraciasPorRegistrarte,
+  GeneralIngresar,
+  GeneralIngresarAdministrador,
+  GeneralInicio,
+  GeneralRecuperarContrasena,
+  GeneralRegistrar,
+  GeneralVerificar,
+  Pagina404
 } from "./pages"; // Asegúrate de que estos componentes están correctamente exportados en "./pages"
+import Tailwind from './pages/Tailwind/Tailwind'; // Importar la página Tailwind
+import { RutaAdministrador, RutaCliente, RutaSemiPrivada } from "./router";
 
 const RoutesComponent = () => {
   return (
     <Routes>
-      {/* RUTAS PÚBLICAS */}
+      {/* RUTAS PÚBLICAS */}A
       <Route
         path="/"
         element={
@@ -92,6 +94,12 @@ const RoutesComponent = () => {
             <GeneralVerificar />
           </LayoutGeneral>
         }
+      />
+
+      {/* Agregar la ruta para la página Tailwind */}
+      <Route
+        path="/tailwind"  // Ruta a la página Tailwind
+        element={<Tailwind />}  // Componente Tailwind
       />
 
       {/* RUTAS SEMIPRIVADAS */}
@@ -241,6 +249,7 @@ const RoutesComponent = () => {
           />
         }
       />
+
 
       {/* RUTAS NO ENCONTRADAS */}
       <Route

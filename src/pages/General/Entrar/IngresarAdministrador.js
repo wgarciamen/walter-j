@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";  // CORRECCIÓN: Cambiado a `useNavigate`
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { EstadoContexto } from "../../../context/EstadoGeneral";
 import {
   ingresarClienteAuthAdministrador,
   traerUnAdministrador,
 } from "../../../controllers/Sesion";
 
-/* ESTADO INICIAL FORMULARIO INGRESAR */
 const initFormIngresar = {
   correo: "",
   contrasena: "",
 };
 
-const IngresarAdministrador = (props) => {  // Eliminar `props` ya que no es necesario con useNavigate
+const IngresarAdministrador = () => {
   const { iniciarSesion } = useContext(EstadoContexto);
   const [formIngresar, setFormIngresar] = useState(initFormIngresar);
   const [usuarioVerificado, setUsuarioVerificado] = useState();
-  const navigate = useNavigate();  // CORRECCIÓN: Usar el hook `useNavigate`
+  const navigate = useNavigate();
 
   const cambiarDatos = (e) => {
     const { name, value } = e.target;
@@ -31,7 +30,7 @@ const IngresarAdministrador = (props) => {  // Eliminar `props` ya que no es nec
       (async () => {
         const usuarioDB = await traerUnAdministrador(usuarioVerificado);
         iniciarSesion(usuarioDB);
-        navigate("/administrador/reportes");  // CORRECCIÓN: Usar navigate en lugar de props.history.push
+        navigate("/administrador/reportes");
       })();
     }
   }, [usuarioVerificado, iniciarSesion, navigate]);
@@ -39,7 +38,7 @@ const IngresarAdministrador = (props) => {  // Eliminar `props` ya que no es nec
   const ingresar = (e) => {
     e.preventDefault();
     ingresarClienteAuthAdministrador(formIngresar).then((res) => {
-      if ( res.idUsuario) {  // Asegúrate de que `res` no sea undefined
+      if (res.idUsuario) {
         setUsuarioVerificado(res);
       } else if (res === "contrasenaIncorrecta") {
         console.log("Contraseña Incorrecta");
@@ -50,45 +49,79 @@ const IngresarAdministrador = (props) => {  // Eliminar `props` ya que no es nec
   };
 
   return (
-    <>
-      <div className="grid-registro">
-        <div className="grid-registro-imagen">
-          <img src="/images/sesion/imagenIngresoLogan.jpg" alt={"hola"} />
-          <div className="contenedor-registro-imagen">
-            <h2>Las mejores mochilas lo tiene LOGAN</h2>
-            <h3>Angie, Hugo y Paloma</h3>
-            <p>Esto Es Guerra</p>
+    <section className="py-32">
+      <div className="container mx-auto">
+        <div className="flex flex-col gap-4 items-center">
+          <img
+            src="/images/sesion/imagenIngresoLogan.jpg"
+            alt="Logo de Administración"
+            className="h-10"
+          />
+          <div className="rounded-lg border bg-white shadow-sm mx-auto w-full max-w-md">
+            <div className="flex flex-col space-y-1.5 p-6 items-center">
+              <h3 className="font-semibold tracking-tight text-xl">
+                Inicio de Sesión - Administrador
+              </h3>
+              <p className="text-sm text-zinc-600">
+                Ingresa tus credenciales para acceder
+              </p>
+            </div>
+            <div className="p-6 pt-0">
+              <form onSubmit={ingresar} className="grid gap-4">
+                <div className="grid gap-2">
+                  <label
+                    className="text-sm font-medium"
+                    htmlFor="correo"
+                  >
+                    Correo electrónico
+                  </label>
+                  <input
+                    id="correo"
+                    name="correo"
+                    type="email"
+                    required
+                    value={formIngresar.correo}
+                    onChange={cambiarDatos}
+                    className="flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm placeholder:text-zinc-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    placeholder="admin@example.com"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label
+                    className="text-sm font-medium"
+                    htmlFor="contrasena"
+                  >
+                    Contraseña
+                  </label>
+                  <input
+                    id="contrasena"
+                    name="contrasena"
+                    type="password"
+                    required
+                    value={formIngresar.contrasena}
+                    onChange={cambiarDatos}
+                    className="flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm placeholder:text-zinc-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    placeholder="********"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium bg-black text-white hover:bg-gray-800 h-10 px-4 py-2 w-full"
+                >
+                  Iniciar Sesión
+                </button>
+              </form>
+            </div>
+          </div>
+          <div className="flex gap-1 text-sm mt-4">
+            <p>¿Olvidaste tu contraseña?</p>
+            <Link to="/admin/recuperar-contrasena" className="underline">
+              Recuperar
+            </Link>
           </div>
         </div>
-        <div className="grid-registro-formulario">
-          <h2>Ingresar</h2>
-          <form onSubmit={ingresar}>
-            <input
-              type="text"
-              required
-              name="correo"
-              placeholder="Correo"
-              value={formIngresar.correo}
-              onChange={cambiarDatos}
-            />
-            <input
-              type="password"
-              required
-              name="contrasena"
-              placeholder="Contraseña"
-              value={formIngresar.contrasena}
-              onChange={cambiarDatos}
-            />
-            <input type="submit" value="Ingresar" />
-            <p>
-              Quiero
-              <Link to="/recuperar-contrasena"> Recuperar </Link>
-              mi cuenta. Olvidé mi contraseña.
-            </p>
-          </form>
-        </div>
       </div>
-    </>
+    </section>
   );
 };
 

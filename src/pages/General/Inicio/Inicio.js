@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { todosProductos } from "../../../controllers/Inicio";
+import React, { useEffect, useState } from "react";
 import ProductoSolo from "../../../components/ProductoSolo/ProductoSolo";
 import Slider from "../../../components/Slider/Slider";
 import { visitasPaginas } from "../../../controllers/Analytics";
+import { todosProductos } from "../../../controllers/Inicio";
+//import { logEvent } from "firebase/analytics";
 import { actualizarVisitas } from "../../../controllers/Visitas";
 import "./Inicio.css";
 

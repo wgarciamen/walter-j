@@ -1,3 +1,15 @@
+/* src/index.css */
+
+/* Directivas de Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tus estilos personalizados aquí abajo */
+
+/* Estilos personalizados que ya tienes */
+
+
 * {
   margin: 0;
   padding: 0;

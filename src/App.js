@@ -1,7 +1,7 @@
-import './App.css';
-import { EstadoProveedor } from "./context/EstadoGeneral";
 import { BrowserRouter as Router } from "react-router-dom";
-import Routes from "./Routes";
+import './App.css'; // Este archivo no es necesario si ya tienes la configuración de Tailwind en index.css
+import { EstadoProveedor } from "./context/EstadoGeneral"; // Asegúrate de que esta importación esté bien configurada
+import Routes from "./Routes"; // Importar las rutas definidas
 
 function App() {
   return (

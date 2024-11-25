@@ -24,7 +24,7 @@
 }
 /** SIDEBAR **/
 .contenedor-sidebar {
-  background-color: #000;
+  background-color: #1f2937;
   top: 0;
   position: fixed;
   left: 0;
@@ -39,6 +39,7 @@
   transition: 0.3s ease all;
   z-index: 800;
 }
+
 
 .contenedor-sidebar.activo {
   transform: translate(0%);

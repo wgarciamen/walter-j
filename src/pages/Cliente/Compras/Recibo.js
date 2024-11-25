@@ -1,12 +1,12 @@
-import React from "react";
 import {
   Document,
-  Page,
-  View,
   Image,
-  Text,
+  Page,
   StyleSheet,
+  Text,
+  View,
 } from "@react-pdf/renderer";
+import React from "react";
 const COL_ANCHO_1 = 10;
 const COL_ANCHO_2 = 20;
 const styles = StyleSheet.create({
@@ -92,8 +92,7 @@ const Recibo = ({ pedido }) => {
               >
                 <Image src="/logoLoganNegro.png" />
                 <Text style={{ textAlign: "center", fontSize: "12px" }}>
-                  VENTA DE TODA CLASE DE MOCHILAS, MALETINES DEPORTIVOS,
-                  CAMPERAS, EJECUTIVOS, CHIMPUNERAS.
+                  VENTA DE TODA CLASE DE DE REPUESTOS.
                 </Text>
                 <Text
                   style={{

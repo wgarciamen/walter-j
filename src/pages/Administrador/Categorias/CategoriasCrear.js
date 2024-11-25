@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   categoriaCrearCF,
   categoriaCrearSF,
 } from "../../../controllers/Categorias";
-import { useNavigate } from "react-router-dom";
 import GenerarUrl from "../../../util/GenerarUrl";
 import "./Categorias.css";
 
@@ -35,6 +35,11 @@ const CategoriasCrear = () => {
     let fotoSeleccionado;
     if (e.target.files && e.target.files.length === 1) {
       fotoSeleccionado = e.target.files[0];
+      const validFormats = ["image/jpeg", "image/png", "image/jpg"];
+      if (!validFormats.includes(fotoSeleccionado.type)) {
+        alert("Solo se permiten imágenes en formato JPG, JPEG o PNG.");
+        return;
+      }
       setFoto(fotoSeleccionado);
     }
   }
@@ -43,7 +48,7 @@ const CategoriasCrear = () => {
     imagenRef.current.click();
   }
 
-  function eliminarImagen(e) {
+  function eliminarImagen() {
     setFoto(undefined);
     setFotoVista(undefined);
     imagenRef.current.value = "";
@@ -66,6 +71,10 @@ const CategoriasCrear = () => {
 
   const crearCategoria = (e) => {
     e.preventDefault();
+    if (!formCategoria.nombre || !formCategoria.descripcion) {
+      alert("Todos los campos son obligatorios.");
+      return;
+    }
     if (foto === undefined) {
       categoriaCrearSF(formCategoria, fotoVista);
     } else {
@@ -99,8 +108,8 @@ const CategoriasCrear = () => {
             type="text"
             disabled
             required
-            defaultValue={GenerarUrl(formCategoria.nombre)}
-            placeholder="Escribe el URL de la categoria"
+            value={formCategoria.urlCategoria}
+            placeholder="URL de la categoria generada automáticamente"
           />
 
           <h4>Descripción:</h4>
@@ -113,6 +122,7 @@ const CategoriasCrear = () => {
             value={formCategoria.descripcion}
             onChange={cambiarDatos}
           ></textarea>
+
           <h4>Imagen:</h4>
           <input
             ref={imagenRef}

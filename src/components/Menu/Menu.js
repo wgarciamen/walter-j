@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
-import "./Menu.css";
-import { useNavigate, Link } from 'react-router-dom';
-import apiCategoria from "./apiCategoria";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 import { EstadoContexto } from "../../context/EstadoGeneral";
 import CalcularPantalla from "../../util/CalcularPantalla";
+import apiCategoria from "./apiCategoria";
+import "./Menu.css";
 
 
 export default function Menu() {
@@ -158,7 +158,7 @@ export default function Menu() {
                 {!exiteUsuario && (
                   <>
                     <Link to="/registrar">Registrar</Link>
-                    <Link to="/ingresar">Ingresar</Link>
+                    <Link to="/ingresar">intro</Link>
                     <hr />
                   </>
                 )}

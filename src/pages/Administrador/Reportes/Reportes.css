@@ -1,84 +1,72 @@
+/* Contenedor principal del dashboard */
 .contenedor-reportes-card {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  width: 80%; /* Ajusta este valor según el espacio que quieres que ocupe */
-  max-width: 1200px; /* Limita el ancho máximo */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  width: 90%;
+  max-width: 1200px;
   padding: 20px;
+  margin: 20px auto;
   box-sizing: border-box;
-  margin: 0 auto; /* Centra el contenedor en la página */
-  transform: translateX(95px); /* Desplaza el contenedor 20px hacia la derecha */
+  margin-left: 250px; /* Espacio para desplazar el contenido hacia la derecha */
 }
 
-
-
-/* Estilo de cada tarjeta */
+/* Tarjetas individuales */
 .card-reporte {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 120px; /* Altura fija para mantenerlas uniformes */
-  border-radius: 8px;
+  height: 140px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  padding: 15px;
   color: white;
   font-weight: bold;
-  text-align: center;
-  padding: 10px;
-  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card-reporte:nth-child(odd) {
-  background-color: red;
+.card-reporte:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-.card-reporte:nth-child(even) {
-  background-color: black;
+/* Colores alternativos */
+.card-reporte:nth-child(1) {
+  background-color: #ff7043; /* Naranja */
 }
 
-.card-reporte h6 {
-  margin: 0;
-  font-size: 14px;
+.card-reporte:nth-child(2) {
+  background-color: #42a5f5; /* Azul */
 }
 
-.card-reporte h3 {
-  margin: 0;
-  font-size: 20px;
+.card-reporte:nth-child(3) {
+  background-color: #66bb6a; /* Verde */
 }
 
-
-/* Estilo para centrar y ajustar el tamaño del formulario */
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 50%; /* Ajusta el tamaño del formulario */
-  max-width: 400px; /* Define un ancho máximo */
-  margin: 20px auto; /* Centra horizontalmente */
-  background-color: red;
-  padding: 15px;
-  border-radius: 8px;
+.card-reporte:nth-child(4) {
+  background-color: #ab47bc; /* Morado */
 }
 
-form label,
-form input[type="date"] {
-  margin: 5px 0; /* Espaciado entre elementos */
+.card-reporte:nth-child(5) {
+  background-color: #ffa726; /* Amarillo */
 }
 
-.boton-formulario {
-  background-color: white;
-  color: red;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+/* Título del dashboard */
+.titulo-dashboard {
+  text-align: left; /* Cambiar la alineación del título */
+  margin-left: 250px; /* Alinear el título con el contenido */
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
   font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
 }
 
-/* Estilo para centrar el título del reporte */
-h3 {
-  text-align: center;
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-top: 10px;
+/* Gráfico centrado */
+.google-visualization-chart {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  margin-left: 250px; /* Desplazar el gráfico hacia la derecha */
 }
